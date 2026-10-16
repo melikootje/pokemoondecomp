@@ -25,11 +25,15 @@ def make_buf(seed):
         _BUFS[seed] = bytes(raw)
     return _BUFS[seed]
 
-def run(code, entry_off, args, seed, wide=False):
+def run(code, entry_off, args, seed, wide=False, fret=False):
     mu = Uc(UC_ARCH_ARM, UC_MODE_ARM)
     mu.mem_map(BUF, BUFSZ); mu.mem_map(STACK, 0x10000); mu.mem_map(CODEBASE, 0x10000); mu.mem_map(RET, 0x1000)
     mu.mem_write(BUF, make_buf(seed % 16))
     mu.mem_write(CODEBASE, code); mu.mem_write(RET, b'\x1e\xff\x2f\xe1')
+    mu.reg_write(UC_ARM_REG_C1_C0_2, mu.reg_read(UC_ARM_REG_C1_C0_2) | (0xF << 20))  # enable VFP
+    mu.reg_write(UC_ARM_REG_FPEXC, 0x40000000)
+    frng = random.Random(seed * 7 + len(args))
+    for sreg in (UC_ARM_REG_S0, UC_ARM_REG_S1, UC_ARM_REG_S2): mu.reg_write(sreg, frng.getrandbits(32))
     mu.reg_write(UC_ARM_REG_R0, BUF + 0x1000)
     for r, v in zip((UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3), args): mu.reg_write(r, v)
     mu.reg_write(UC_ARM_REG_SP, STACK + 0x8000); mu.reg_write(UC_ARM_REG_LR, RET)
@@ -38,7 +42,8 @@ def run(code, entry_off, args, seed, wide=False):
         if mu.reg_read(UC_ARM_REG_PC) != RET: return 'fault'  # did not return: treat as fault, never as a pass
     except UcError:
         return 'fault'
-    return mu.reg_read(UC_ARM_REG_R0) | (mu.reg_read(UC_ARM_REG_R1) << 32 if wide else 0), bytes(mu.mem_read(BUF, BUFSZ))
+    ret = mu.reg_read(UC_ARM_REG_S0) if fret else mu.reg_read(UC_ARM_REG_R0) | (mu.reg_read(UC_ARM_REG_R1) << 32 if wide else 0)
+    return ret, bytes(mu.mem_read(BUF, BUFSZ))
 
 def argset(rng):
     pick = lambda: rng.choice([0, 1, 2, 3, 4, 5, 59, 60, 61, 99, 100, 101, 254, 255, 256, 0x7fffffff, 0x80000000, 0xffffffff,
@@ -50,8 +55,10 @@ fails = 0
 for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
     ad = int(ad_s, 16); q = queue[ad_s.lower()]; n = int(q['size'])
     m = re.search(r'extern "C" ([\w\*\s]+?)\s\w+\([^)]*\) \{', text[text.index(ad_s):])
-    void = m.group(1).strip() == 'void'
-    wide = m.group(1).strip() == 'uint64_t'
+    rtype = m.group(1).replace('VFP', '').strip()
+    void = rtype == 'void'
+    wide = rtype == 'uint64_t'
+    fret = rtype == 'float'
     with tempfile.TemporaryDirectory() as td:
         subprocess.run(['arm-none-eabi-g++', *flags, f'-DPOKEMOON_SPLIT_FUNCTION={ad:#x}', '-c', f'{ROOT}/{src_path}', '-o', f'{td}/a.o'], check=True)
         subprocess.run(['arm-none-eabi-objcopy', '-O', 'binary', '-j', '.text', f'{td}/a.o', f'{td}/a.bin'])
@@ -60,7 +67,7 @@ for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
     rng = random.Random(ad); bad = None; both_fault = 0
     for t in range(trials):
         args = argset(rng)
-        a = run(retail, 0, args, t, wide); b = run(mine + b'\0' * 64, 0, args, t, wide)
+        a = run(retail, 0, args, t, wide, fret); b = run(mine + b'\0' * 64, 0, args, t, wide, fret)
         if a == 'fault' or b == 'fault':
             if a != b: bad = (args, 'fault mismatch'); break
             both_fault += 1; continue
