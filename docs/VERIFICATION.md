@@ -16,10 +16,23 @@ For each guarded function in a source file it:
    temporaries passed by pointer;
 4. compares the return value (core or `s0`), all memory, and the call sequence.
 
+Inputs follow the AAPCS: `bool` and narrow integer parameters are extended,
+scalar first parameters (static functions) are varied instead of receiving an
+object pointer, and incoming stack arguments are randomized.
+
+Retail `.rodata` is mapped at its real address; `.data`/`.bss` get
+pointer-rich random contents that vary per trial, so singleton and table
+accesses stay live. Literal-pool references to globals are supported: the
+reconstruction declares the global with an `__asm__` label and the checker
+places it at the retail address. Unnamed globals and functions use
+Ghidra-style labels (`DAT_xxxxxxxx`, `FUN_xxxxxxxx`) so they can be renamed once
+recovered, e.g. `extern Obj DAT_0063e07c[] __asm__("DAT_0063e07c");`.
+
 A function passes only if every trial matches and at least 10 trials ran to a
-return (runs where both sides fault prove nothing and are not counted). Data
-relocations, indirect calls (`blx rN`) and literal-pool globals are not
-supported, and such functions are reported as unverifiable rather than passed.
+return (runs where both sides fault prove nothing and are not counted).
+Indirect calls (`blx rN`), calls that need caller-visible callee side effects,
+and references to the reconstruction's own `.rodata` (string literals, jump
+tables) are not supported and are reported as unverifiable rather than passed.
 
 ```sh
 tools/equiv_check.py src/savedata/call_batch_005.cpp 300
