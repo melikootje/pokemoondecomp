@@ -20,6 +20,10 @@ text = open(f'{ROOT}/{src_path}').read()
 BUF, BUFSZ, STACK, CODEBASE, RET = 0x10000000, 0x40000, 0x20000000, 0x30000000, 0x50000000
 STUBBASE = 0x30010000  # within +-32MB of CODEBASE so patched B/BL can reach it
 
+def ptype(decl):  # 'bool useHighWord' -> 'bool'; unnamed 'bool' -> 'bool'
+    toks = decl.replace('const', ' ').split()
+    return toks[-2] if len(toks) >= 2 else (toks[0] if toks else '')
+STACK_MASKS = []  # per outgoing-from-caller stack slot: masks derived from the function's declared parameter types
 _BUFS = {}
 def make_buf(seed):
     if seed not in _BUFS:
@@ -60,7 +64,10 @@ def run(code, entry_off, args, seed, wide=False, fret=False, stubs=()):
     mu.reg_write(UC_ARM_REG_R0, BUF + 0x1000)
     for r, v in zip((UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3), args): mu.reg_write(r, v)
     mu.reg_write(UC_ARM_REG_SP, STACK + 0x8000); mu.reg_write(UC_ARM_REG_LR, RET)
-    srng = random.Random(seed * 13 + 5); mu.mem_write(STACK + 0x8000, b''.join((srng.choice([0, 1, 2, 3, 7, 60, 255]) if srng.random() < .6 else BUF + 4 * srng.randrange(1000)).to_bytes(4, 'little') for _ in range(8)))
+    srng = random.Random(seed * 13 + 5)
+    words = [(srng.choice([0, 1, 2, 3, 7, 60, 255]) if srng.random() < .6 else BUF + 4 * srng.randrange(1000)) for _ in range(8)]
+    for j, mask in enumerate(STACK_MASKS[:8]): words[j] = mask(words[j])
+    mu.mem_write(STACK + 0x8000, b''.join(w.to_bytes(4, 'little') for w in words))
     try:
         mu.emu_start(CODEBASE + entry_off, RET, count=20000)
         if mu.reg_read(UC_ARM_REG_PC) != RET: return 'fault'  # did not return: treat as fault, never as a pass
@@ -120,9 +127,29 @@ for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
     stubs = tuple(names)
     if skip_data:
         print(ad_s, 'UNVERIFIABLE (data relocation)'); fails += 1; continue
+    sig = re.search(r'extern "C" [\w\*\s]+?\s\**\w+\(([^)]*)\)\s*(?:__attribute__\(\([^)]*\)\)\s*)?\{', text[text.index(ad_s):])
+    ptypes = [x.strip() for x in sig.group(1).split(',') if x.strip()] if sig else []
+    core = [t for t in ptypes if t != 'float' and t != 'double']  # floats travel in VFP registers under aapcs-vfp
+    def conform(args):  # callers extend narrow arguments per the AAPCS; honour the declared parameter types
+        out = list(args)
+        for k in (1, 2, 3):
+            if k < len(core) and '*' not in core[k]:
+                t = ptype(core[k])
+                v = out[k - 1]
+                if t == 'bool': v &= 1
+                elif t == 'uint8_t': v &= 0xFF
+                elif t == 'uint16_t': v &= 0xFFFF
+                elif t == 'int8_t': v = (v & 0xFF) - 256 & 0xFFFFFFFF if v & 0x80 else v & 0xFF
+                elif t == 'int16_t': v = (v & 0xFFFF) - 65536 & 0xFFFFFFFF if v & 0x8000 else v & 0xFFFF
+                out[k - 1] = v
+        return out
+    def mask_for(t):
+        t = ptype(t)
+        return {'bool': lambda v: v & 1, 'uint8_t': lambda v: v & 0xFF, 'uint16_t': lambda v: v & 0xFFFF}.get(t, lambda v: v)
+    STACK_MASKS[:] = [mask_for(t) if '*' not in t else (lambda v: v) for t in core[4:]]
     rng = random.Random(ad); bad = None; both_fault = 0
     for t in range(trials):
-        args = argset(rng)
+        args = conform(argset(rng))
         a = run(bytes(retail), 0, args, t, wide, fret, stubs); b = run(bytes(mine) + b'\0' * 64, 0, args, t, wide, fret, stubs)
         if a == 'fault' or b == 'fault':
             if a != b: bad = (args, 'fault mismatch'); break
