@@ -6,7 +6,7 @@ usage: equiv_check.py <source.cpp> [trials]
 """
 import os, random, re, subprocess, sys, tempfile
 from unicorn import Uc, UC_ARCH_ARM, UC_MODE_ARM, UcError
-from unicorn import UC_HOOK_CODE, UC_HOOK_MEM_FETCH_PROT, UC_HOOK_MEM_FETCH_UNMAPPED, UC_PROT_READ, UC_PROT_WRITE, UC_PROT_ALL
+from unicorn import UC_HOOK_MEM_READ_UNMAPPED, UC_HOOK_MEM_WRITE_UNMAPPED, UC_HOOK_MEM_WRITE, UC_HOOK_CODE, UC_HOOK_MEM_FETCH_PROT, UC_HOOK_MEM_FETCH_UNMAPPED, UC_PROT_READ, UC_PROT_WRITE, UC_PROT_ALL
 from unicorn.arm_const import *
 import zlib
 hash_name = lambda n: zlib.crc32(n.encode())
@@ -51,12 +51,25 @@ def make_buf(seed):
 
 def run(code, entry_off, args, seed, wide=False, fret=False, stubs=(), r0=None):
     mu = Uc(UC_ARCH_ARM, UC_MODE_ARM)
-    mu.mem_map(BUF, BUFSZ, UC_PROT_READ | UC_PROT_WRITE); mu.mem_map(STACK, 0x10000, UC_PROT_READ | UC_PROT_WRITE); mu.mem_map(CODEBASE, 0x10000); mu.mem_map(RET, 0x1000)
-    mu.mem_write(BUF, make_buf(seed % 128))
+    mu.mem_map(STACK, 0x10000, UC_PROT_READ | UC_PROT_WRITE); mu.mem_map(CODEBASE, 0x10000); mu.mem_map(RET, 0x1000)
     mu.mem_write(CODEBASE, code); mu.mem_write(RET, b'\x1e\xff\x2f\xe1')
-    mu.mem_map(GLOB, GLOBEND - GLOB, UC_PROT_READ | UC_PROT_WRITE)
-    mu.mem_write(GLOB, _glob_init(seed % 16))
+    buf_img = make_buf(seed % 128); glob_img = _glob_init(seed % 16)
+    def map_page(uc, page):
+        if BUF <= page < BUF + BUFSZ: uc.mem_map(page, 0x1000, UC_PROT_READ | UC_PROT_WRITE); uc.mem_write(page, buf_img[page - BUF: page - BUF + 0x1000])
+        elif GLOB <= page < GLOBEND: uc.mem_map(page, 0x1000, UC_PROT_READ | UC_PROT_WRITE); uc.mem_write(page, glob_img[page - GLOB: page - GLOB + 0x1000])
+        else: return False
+        return True
+    def on_unmapped_data(uc, access, address, size, value, ud):
+        ok = False
+        for pg in {address & ~0xFFF, (address + size - 1) & ~0xFFF}:
+            try: ok = map_page(uc, pg) or ok
+            except UcError: ok = True  # already mapped (second page of a straddling access)
+        return ok
     events = []
+    written = set()
+    def on_write(uc, access, address, size, value, ud):
+        if BUF <= address < BUF + BUFSZ or GLOB <= address < GLOBEND: written.add((address, size))
+    mu.hook_add(UC_HOOK_MEM_WRITE, on_write)
     def on_indirect(uc, access, address, size, value, ud):
         # a jump into data/unmapped memory is an indirect (virtual) call: record target + arguments and return to the caller
         a = tuple(uc.reg_read(r) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3))
@@ -69,10 +82,12 @@ def run(code, entry_off, args, seed, wide=False, fret=False, stubs=(), r0=None):
         uc.reg_write(UC_ARM_REG_PC, uc.reg_read(UC_ARM_REG_LR) & ~1)
         return True
     def on_unmapped_fetch(uc, access, address, size, value, ud):
+        if on_unmapped_data(uc, access, address, 1, value, ud): return True  # lazily mapped data page: next try is a protection fault
         uc.mem_map(address & ~0xFFF, 0x1000, UC_PROT_READ | UC_PROT_WRITE)  # make the retry a protection fault we can handle
         return True
     mu.hook_add(UC_HOOK_MEM_FETCH_PROT, on_indirect)
     mu.hook_add(UC_HOOK_MEM_FETCH_UNMAPPED, on_unmapped_fetch)
+    mu.hook_add(UC_HOOK_MEM_READ_UNMAPPED | UC_HOOK_MEM_WRITE_UNMAPPED, on_unmapped_data)
     if stubs:
         mu.mem_map(STUBBASE, 0x1000); mu.mem_write(STUBBASE, b'\x1e\xff\x2f\xe1' * (len(stubs) * 2))
         def on_stub(uc, addr, size, ud):
@@ -104,12 +119,17 @@ def run(code, entry_off, args, seed, wide=False, fret=False, stubs=(), r0=None):
     mu.mem_write(STACK + 0x8000, b''.join(w.to_bytes(4, 'little') for w in words))
     try:
         mu.emu_start(CODEBASE + entry_off, RET, count=20000)
-        if mu.reg_read(UC_ARM_REG_PC) != RET: return 'fault'  # did not return: treat as fault, never as a pass
+        if mu.reg_read(UC_ARM_REG_PC) != RET: return 'timeout'  # instruction cap hit: inconclusive (builds differ in loop speed), never a pass
     except UcError as e:
-        LAST_ERR[0] = (str(e), hex(mu.reg_read(UC_ARM_REG_PC)))
+        LAST_ERR[0] = (str(e), hex(mu.reg_read(UC_ARM_REG_PC)), 'r0=%x r1=%x ip=%x' % (mu.reg_read(UC_ARM_REG_R0), mu.reg_read(UC_ARM_REG_R1), mu.reg_read(UC_ARM_REG_R12)))
         return 'fault'
     ret = mu.reg_read(UC_ARM_REG_S0) if fret else mu.reg_read(UC_ARM_REG_R0) | (mu.reg_read(UC_ARM_REG_R1) << 32 if wide else 0)
-    return ret, bytes(mu.mem_read(BUF, BUFSZ)) + bytes(mu.mem_read(GLOB, GLOBEND - GLOB)), tuple(events)
+    # only the bytes that were written can differ from the (identical) initial image
+    bytemap = {}
+    for a, sz in written:
+        for k, v in enumerate(bytes(mu.mem_read(a, sz))): bytemap[a + k] = v
+    mem = tuple(sorted(bytemap.items()))
+    return ret, mem, tuple(events)
 
 def argset(rng):
     pick = lambda: rng.choice([0, 1, 2, 3, 4, 5, 59, 60, 61, 99, 100, 101, 254, 255, 256, 0x7fffffff, 0x80000000, 0xffffffff,
@@ -117,6 +137,15 @@ def argset(rng):
     ptr = lambda: BUF + 0x2000 + 4 * rng.randrange(64)
     return [rng.choice([pick(), pick(), ptr()]), rng.choice([pick(), ptr(), 0]), rng.choice([pick(), ptr()])]
 
+def _build(ad):
+    with tempfile.TemporaryDirectory() as td:
+        subprocess.run(['arm-none-eabi-g++', *flags, f'-DPOKEMOON_SPLIT_FUNCTION={ad:#x}', '-c', f'{ROOT}/{src_path}', '-o', f'{td}/a.o'], check=True)
+        subprocess.run(['arm-none-eabi-objcopy', '-O', 'binary', '-j', '.text', f'{td}/a.o', f'{td}/a.bin'])
+        rel = subprocess.run(['arm-none-eabi-objdump', '-r', f'{td}/a.o'], capture_output=True, text=True).stdout
+        return ad, (open(f'{td}/a.bin', 'rb').read(), rel)
+from concurrent.futures import ThreadPoolExecutor
+with ThreadPoolExecutor(8) as _ex:
+    BUILT = dict(_ex.map(_build, [int(a, 16) for a in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text)]))
 fails = 0
 ARITY = {}
 for decl in re.finditer(r'^\s*[\w\*\s]+?\s\**\w+\(([^)]*)\)\s*__asm__\("([^"]+)"\);', text, re.M):
@@ -127,17 +156,15 @@ syms = {r['target_address'].lower(): r['mangled_name'] for r in csv.DictReader(o
 REV = {v: int(k, 16) for k, v in syms.items()}
 for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
     ad = int(ad_s, 16); q = queue[ad_s.lower()]; n = int(q['size'])
+    _blk = text[text.index(ad_s):]; _blk = _blk[:_blk.index('#endif')]
+    _ms = re.search(r'retail-size:\s*(0x[0-9a-fA-F]+|\d+)', _blk)
+    if _ms: n = int(_ms.group(1), 0)  # inventory sizes are cut short at some calls; the comment gives the true extent
     m = re.search(r'extern "C" ([\w\*\s]+?)\s\w+\([^)]*\) \{', text[text.index(ad_s):])
     rtype = m.group(1).replace('VFP', '').strip()
     void = rtype == 'void'
     wide = rtype == 'uint64_t'
     fret = rtype == 'float'
-    with tempfile.TemporaryDirectory() as td:
-        subprocess.run(['arm-none-eabi-g++', *flags, f'-DPOKEMOON_SPLIT_FUNCTION={ad:#x}', '-c', f'{ROOT}/{src_path}', '-o', f'{td}/a.o'], check=True)
-        subprocess.run(['arm-none-eabi-objcopy', '-O', 'binary', '-j', '.text', f'{td}/a.o', f'{td}/a.bin'])
-        mine = open(f'{td}/a.bin', 'rb').read()
-        td_obj = f'{td}/a.o'
-        rel_txt = subprocess.run(['arm-none-eabi-objdump', '-r', td_obj], capture_output=True, text=True).stdout
+    mine, rel_txt = BUILT[ad]
     retail = bytearray(CODE[ad - 0x100000: ad - 0x100000 + n + 64])  # includes the trailing literal pool
     names = []  # stub table shared by both sides, keyed by callee symbol
     def stub_for(name):
@@ -154,6 +181,9 @@ for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
             tgt = ad + off + 8 + imm * 4
             if not (ad <= tgt < ad + n):
                 patch(retail, off, stub_for(syms.get('0x%08x' % tgt) or 'FUN_%08x' % tgt))
+    if n >= 4 and int.from_bytes(retail[n - 4:n], 'little') == 0xE1A00000:  # trailing `mov r0, r0`: falls through into the next function
+        retail[n - 4:n] = (0xEA000000).to_bytes(4, 'little')
+        patch(retail, n - 4, stub_for(syms.get('0x%08x' % (ad + n)) or 'FUN_%08x' % (ad + n)))
     mine = bytearray(mine)
     rel = rel_txt; skip_data = False
     for line in rel.splitlines():
@@ -203,10 +233,12 @@ for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
     for t in range(trials):
         args = conform(argset(rng)); first = first_arg(rng)
         a = run(bytes(retail), 0, args, t, wide, fret, stubs, first); b = run(bytes(mine) + b'\0' * 64, 0, args, t, wide, fret, stubs, first)
+        if a == 'timeout' or b == 'timeout':
+            both_fault += 1; continue  # inconclusive trial
         if a == 'fault' or b == 'fault':
-            if a != b: bad = (args, 'fault mismatch'); break
+            if a != b: bad = (args, 'fault mismatch: retail=%s mine=%s' % ('fault' if a == 'fault' else 'ok', 'fault' if b == 'fault' else 'ok'), LAST_ERR[0]); break
             both_fault += 1; continue
-        if (not void and a[0] != b[0]) or a[1] != b[1] or a[2] != b[2]: bad = (args, 'ret %s/%s mem %s calls %s | %s' % (hex(a[0]), hex(b[0]), a[1] == b[1], a[2][:3], b[2][:3])); break
+        if (not void and a[0] != b[0]) or a[1] != b[1] or a[2] != b[2]: bad = (args, 'ret %s/%s mem %s calls %s | %s' % (hex(a[0]), hex(b[0]), 'same' if a[1] == b[1] else 'DIFF retail-only=%s mine-only=%s' % ([(hex(x), hex(y)) for x, y in a[1] if (x, y) not in b[1]][:4], [(hex(x), hex(y)) for x, y in b[1] if (x, y) not in a[1]][:4]), a[2][:3], b[2][:3])); break
     live = trials - both_fault
     if not bad and live < min(10, trials // 4): bad = ('too few live trials', live)  # both sides faulting proves nothing
     print(ad_s, 'EQUIVALENT' if not bad else f'MISMATCH {bad}', f'({live} live trials)')

@@ -17,6 +17,9 @@ flags = subprocess.check_output(['python3', f'{ROOT}/scripts/manage_build.py', '
 rows = []
 for ad in addrs:
     key = f'0x{ad:08x}'; q = queue[key]; n = int(q['size']); sym = syms[key]
+    _i = text.upper().index('POKEMOON_SPLIT_FUNCTION == 0X%08X' % ad); _blk = text[_i:]; _blk = _blk[:_blk.index('#endif')]
+    _ms = re.search(r'retail-size:\s*(0x[0-9a-fA-F]+|\d+)', _blk)
+    if _ms: n = int(_ms.group(1), 0)  # inventory size was cut short at a call; the comment holds the true extent
     # find the C symbol bound to this mangled name inside the guard
     m = re.search(r'extern "C" \w[\w\s\*]*?\b(\w+)\([^)]*\) __asm__\("%s"\)' % re.escape(sym), text)
     name = m.group(1)

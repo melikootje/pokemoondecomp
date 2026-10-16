@@ -1,6 +1,6 @@
 # Decompilation progress
 
-Updated: 2026-09-05
+Updated: 2026-10-17
 
 ## Target
 
@@ -14,11 +14,11 @@ Updated: 2026-09-05
 
 | Metric | Count |
 |---|---:|
-| Source-backed | 1,000 |
-| Compiling | 1,000 |
+| Source-backed | 3,362 |
+| Compiling | 3,362 |
 | `ASM_MATCH` | 318 |
 | `ASM_NEAR_MATCH` | 1 |
-| Semantic verified/nonmatching | 698 |
+| Semantic verified/nonmatching | 3,040 |
 | Semantic unverified | 3 |
 | Runtime-ready | 53 |
 | Remaining YELLOW | 622 |

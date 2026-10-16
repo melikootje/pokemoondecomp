@@ -68,7 +68,8 @@ extern "C" void GameData_FormatStart(Obj* self, Obj* heap) __asm__("_ZN7GameSys8
 extern "C" void GameData_FormatStart(Obj* self, Obj* heap) {
     // indirect-args: 2
     Obj* backup = RPTR(self, 8);
-    if (backup) VCALL(void, backup, 12, Obj*)(backup, heap);
+    if (!backup) return;
+    VCALL(void, backup, 12, Obj*)(backup, heap);
     self[5276] = 5;
 }
 #endif
