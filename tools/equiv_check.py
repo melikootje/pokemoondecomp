@@ -6,7 +6,7 @@ usage: equiv_check.py <source.cpp> [trials]
 """
 import os, random, re, subprocess, sys, tempfile
 from unicorn import Uc, UC_ARCH_ARM, UC_MODE_ARM, UcError
-from unicorn import UC_HOOK_CODE
+from unicorn import UC_HOOK_CODE, UC_HOOK_MEM_FETCH_PROT, UC_HOOK_MEM_FETCH_UNMAPPED, UC_PROT_READ, UC_PROT_WRITE, UC_PROT_ALL
 from unicorn.arm_const import *
 import zlib
 hash_name = lambda n: zlib.crc32(n.encode())
@@ -25,6 +25,8 @@ def ptype(decl):  # 'bool useHighWord' -> 'bool'; unnamed 'bool' -> 'bool'
     toks = decl.replace('const', ' ').split()
     return toks[-2] if len(toks) >= 2 else (toks[0] if toks else '')
 GLOB_INIT = None
+LAST_ERR = [None]
+INDIRECT_ARGS = [1]
 STACK_MASKS = []  # per outgoing-from-caller stack slot: masks derived from the function's declared parameter types
 _GLOBS = {}
 def _glob_init(variant=0):
@@ -40,19 +42,37 @@ _BUFS = {}
 def make_buf(seed):
     if seed not in _BUFS:
         rng = random.Random(seed); raw = bytearray(rng.randbytes(BUFSZ))
-        for i in range(0, BUFSZ, 4):  # half the words become in-range pointers so pointer chains stay live
-            if raw[i + 3] & 1: raw[i:i + 4] = (BUF + (int.from_bytes(raw[i:i + 3], 'little') & 0x3FFFC)).to_bytes(4, 'little')
+        dense = seed % 4 >= 2  # half the variants are pointer-dense so deep pointer chains / linked lists stay live
+        for i in range(0, BUFSZ, 4):  # words become in-range pointers so pointer chains stay live
+            if (raw[i + 3] & 1) or (dense and raw[i + 3] & 2): raw[i:i + 4] = (BUF + (int.from_bytes(raw[i:i + 3], 'little') & 0x3FFFC)).to_bytes(4, 'little')
+            elif seed % 8 >= 4 and (raw[i + 2] & 7) == 7: raw[i:i + 4] = b'\0\0\0\0'  # some null words so linked lists can terminate
         _BUFS[seed] = bytes(raw)
     return _BUFS[seed]
 
 def run(code, entry_off, args, seed, wide=False, fret=False, stubs=(), r0=None):
     mu = Uc(UC_ARCH_ARM, UC_MODE_ARM)
-    mu.mem_map(BUF, BUFSZ); mu.mem_map(STACK, 0x10000); mu.mem_map(CODEBASE, 0x10000); mu.mem_map(RET, 0x1000)
-    mu.mem_write(BUF, make_buf(seed % 16))
+    mu.mem_map(BUF, BUFSZ, UC_PROT_READ | UC_PROT_WRITE); mu.mem_map(STACK, 0x10000, UC_PROT_READ | UC_PROT_WRITE); mu.mem_map(CODEBASE, 0x10000); mu.mem_map(RET, 0x1000)
+    mu.mem_write(BUF, make_buf(seed % 128))
     mu.mem_write(CODEBASE, code); mu.mem_write(RET, b'\x1e\xff\x2f\xe1')
-    mu.mem_map(GLOB, GLOBEND - GLOB)
+    mu.mem_map(GLOB, GLOBEND - GLOB, UC_PROT_READ | UC_PROT_WRITE)
     mu.mem_write(GLOB, _glob_init(seed % 16))
     events = []
+    def on_indirect(uc, access, address, size, value, ud):
+        # a jump into data/unmapped memory is an indirect (virtual) call: record target + arguments and return to the caller
+        a = tuple(uc.reg_read(r) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3))
+        norm = lambda v: 'SP' if STACK <= v < STACK + 0x10000 else v
+        events.append(('INDIRECT', address) + tuple(norm(v) for v in a[:INDIRECT_ARGS[0]]))  # `// indirect-args: N` in the function body
+        h = (address * 2654435761 + len(events)) & 0xFFFFFFFF
+        h = BUF + (h & 0x3FFFC) if seed % 2 else h % 6  # same value model as direct-call stubs
+        uc.reg_write(UC_ARM_REG_R0, h); uc.reg_write(UC_ARM_REG_R1, (h * 31) & 0xFFFFFFFF)
+        uc.reg_write(UC_ARM_REG_CPSR, uc.reg_read(UC_ARM_REG_CPSR) & ~0x20)  # a blx to an odd address switched to Thumb: return in ARM state
+        uc.reg_write(UC_ARM_REG_PC, uc.reg_read(UC_ARM_REG_LR) & ~1)
+        return True
+    def on_unmapped_fetch(uc, access, address, size, value, ud):
+        uc.mem_map(address & ~0xFFF, 0x1000, UC_PROT_READ | UC_PROT_WRITE)  # make the retry a protection fault we can handle
+        return True
+    mu.hook_add(UC_HOOK_MEM_FETCH_PROT, on_indirect)
+    mu.hook_add(UC_HOOK_MEM_FETCH_UNMAPPED, on_unmapped_fetch)
     if stubs:
         mu.mem_map(STUBBASE, 0x1000); mu.mem_write(STUBBASE, b'\x1e\xff\x2f\xe1' * (len(stubs) * 2))
         def on_stub(uc, addr, size, ud):
@@ -85,7 +105,8 @@ def run(code, entry_off, args, seed, wide=False, fret=False, stubs=(), r0=None):
     try:
         mu.emu_start(CODEBASE + entry_off, RET, count=20000)
         if mu.reg_read(UC_ARM_REG_PC) != RET: return 'fault'  # did not return: treat as fault, never as a pass
-    except UcError:
+    except UcError as e:
+        LAST_ERR[0] = (str(e), hex(mu.reg_read(UC_ARM_REG_PC)))
         return 'fault'
     ret = mu.reg_read(UC_ARM_REG_S0) if fret else mu.reg_read(UC_ARM_REG_R0) | (mu.reg_read(UC_ARM_REG_R1) << 32 if wide else 0)
     return ret, bytes(mu.mem_read(BUF, BUFSZ)) + bytes(mu.mem_read(GLOB, GLOBEND - GLOB)), tuple(events)
@@ -176,6 +197,8 @@ for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
         t = ptype(t)
         return {'bool': lambda v: v & 1, 'uint8_t': lambda v: v & 0xFF, 'uint16_t': lambda v: v & 0xFFFF}.get(t, lambda v: v)
     STACK_MASKS[:] = [mask_for(t) if '*' not in t else (lambda v: v) for t in core[4:]]
+    blk = text[text.index(ad_s):]; blk = blk[:blk.index('#endif')]
+    mi = re.search(r'indirect-args:\s*(\d)', blk); INDIRECT_ARGS[0] = int(mi.group(1)) if mi else 1
     rng = random.Random(ad); bad = None; both_fault = 0
     for t in range(trials):
         args = conform(argset(rng)); first = first_arg(rng)

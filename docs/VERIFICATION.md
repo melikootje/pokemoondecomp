@@ -30,7 +30,12 @@ recovered, e.g. `extern Obj DAT_0063e07c[] __asm__("DAT_0063e07c");`.
 
 A function passes only if every trial matches and at least 10 trials ran to a
 return (runs where both sides fault prove nothing and are not counted).
-Indirect calls (`blx rN`), calls that need caller-visible callee side effects,
+Indirect (virtual) calls are supported: data and unmapped memory is non-executable, a
+jump into it is recorded as an `INDIRECT` event (target address plus `this`, or more
+registers via a `// indirect-args: N` comment in the function) and returns to the
+caller. Random memory rarely holds long pointer chains or null-terminated lists, so
+buffers come in 128 variants (some pointer-dense, some with null words). Calls that
+need caller-visible callee side effects
 and references to the reconstruction's own `.rodata` (string literals, jump
 tables) are not supported and are reported as unverifiable rather than passed.
 
