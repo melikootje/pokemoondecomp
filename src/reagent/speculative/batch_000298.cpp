@@ -1142,3 +1142,435 @@ uint32_t* this_ptr = reinterpret_cast<uint32_t*>(arg0);
     *reinterpret_cast<uint32_t*>(this_ptr + 3) &= 0xcff00000;
 }
 #endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002C7A7C
+extern "C" void Speculative_002c7a7c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App11TrainerPass8PlayData12SetStampPageEi");
+extern "C" void Speculative_002c7a7c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x4) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002C7E18
+extern "C" void Speculative_002c7e18(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App3Box11BoxAppSetup15SetOtherMessageEi");
+extern "C" void Speculative_002c7e18(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x94) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002C9B40
+extern "C" void Speculative_002c9b40(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App4Tool10MapManager14SetupPlayerSexEj");
+extern "C" void Speculative_002c9b40(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x1ac) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002CB73C
+extern "C" void Speculative_002cb73c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App4Tool10TalkWindow8SetTimerEi");
+extern "C" void Speculative_002cb73c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0xb4) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002CC53C
+extern "C" void Speculative_002cc53c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App4Tool11NewPaneList15SetupInsertPaneEPN2nw3lyt4PaneE");
+extern "C" void Speculative_002cc53c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0xbc) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002D4AE8
+extern "C" void Speculative_002d4ae8(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App5Event12ShopBuyEvent9SetupHeapEPN4gfl24heap11CtrHeapBaseE");
+extern "C" void Speculative_002d4ae8(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x48) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002E0F40
+extern "C" void Speculative_002e0f40(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App8PokeList16IntermediateData12SetParameterEPN3pml9PokePartyE");
+extern "C" void Speculative_002e0f40(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x0) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002E71F4
+extern "C" void Speculative_002e71f4(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3app2ui13UIViewManager20SetTopPriorityUIViewEPNS0_6UIViewE");
+extern "C" void Speculative_002e71f4(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x80) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002E78EC
+extern "C" void Speculative_002e78ec(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3app2ui6UIView21SetLayoutTransferAreaEN4gfl23lyt10MemoryAreaE");
+extern "C" void Speculative_002e78ec(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x74) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002E81A4
+extern "C" void Speculative_002e81a4(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3app3bag8PlayData12SetPocketPosEj");
+extern "C" void Speculative_002e81a4(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x20) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002EA004
+extern "C" void Speculative_002ea004(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3app4tool10MenuWindow11SetListenerEPNS0_18MenuWindowListenerE");
+extern "C" void Speculative_002ea004(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x154) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002EBBDC
+extern "C" void Speculative_002ebbdc(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3app4tool12PaneListView11SetListenerEPNS1_8ListenerE");
+extern "C" void Speculative_002ebbdc(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x90) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00340F08
+extern "C" void Speculative_00340f08(uint8_t* arg0, uint32_t arg1) __asm__("_ZN4gfl22fs17BinLinkerAccessor10InitializeEPv");
+extern "C" void Speculative_00340f08(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x0) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00340F10
+extern "C" void Speculative_00340f10(uint8_t* arg0, uint32_t arg1) __asm__("_ZN4gfl22fs17BinLinkerAccessorC1EPv");
+extern "C" void Speculative_00340f10(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x0) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00358BEC
+extern "C" float Speculative_00358bec(uint8_t* arg0) __asm__("_ZN4gfl24math16SpringSimulation10GetPostionEv");
+extern "C" float Speculative_00358bec(uint8_t* arg0) { return *(float*)((uint32_t)arg0 + 0x18); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003C15D4
+extern "C" void Speculative_003c15d4(uint8_t* arg0, uint32_t arg1) __asm__("_ZN5print7WordSet16SetWordSetLoaderEP13WordSetLoader");
+extern "C" void Speculative_003c15d4(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x14) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003CF198
+extern "C" void Speculative_003cf198(uint8_t* arg0, uint32_t arg1) __asm__("_ZN6NetApp3NBR6NBRNet18RegistRecvListenerEPNS0_18NBRNetRecvListenerE");
+extern "C" void Speculative_003cf198(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0xc) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003D6E6C
+extern "C" void Speculative_003d6e6c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN6NetLib3P2P20P2pConnectionManager23RegistMigrationListenerEPNS0_30P2pConnectionMigrationListenerE");
+extern "C" void Speculative_003d6e6c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x88) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003D8C7C
+extern "C" void Speculative_003d8c7c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN6NetLib3Pgl12PGLConnector23SetPGLConnectorListenerEPNS0_20PGLConnectorListenerE");
+extern "C" void Speculative_003d8c7c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0xb54) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003E058C
+extern "C" void Speculative_003e058c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN6NetLib8Delivery15DeliveryManager13SetSerialCodeEj");
+extern "C" void Speculative_003e058c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x88) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003E0660
+extern "C" void Speculative_003e0660(uint8_t* arg0, uint32_t arg1) __asm__("_ZN6NetLib8Delivery15DeliveryManager15SetRecvListenerEPNS0_20DeliveryRecvListenerE");
+extern "C" void Speculative_003e0660(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x1c) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003E0668
+extern "C" void Speculative_003e0668(uint8_t* arg0, uint32_t arg1) __asm__("_ZN6NetLib8Delivery15DeliveryManager15SetSendListenerEPNS0_20DeliverySendListenerE");
+extern "C" void Speculative_003e0668(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x18) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003FD8BC
+extern "C" void Speculative_003fd8bc(uint8_t* arg0, uint32_t arg1) __asm__("_ZN7gflnet23nex20NexMatchMakingClient20SetCommunityListenerEPNS0_20NexCommunityListenerE");
+extern "C" void Speculative_003fd8bc(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x1c) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0040D498
+extern "C" void Speculative_0040d498(uint8_t* arg0, float arg_f) __asm__("_ZN7poke_3d5model10BaseCamera22SetLocalAnimationScaleEf");
+extern "C" void Speculative_0040d498(uint8_t* arg0, float arg_f) { *(float*)((uint32_t)arg0 + 0x6c) = arg_f; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0040DD54
+extern "C" void Speculative_0040dd54(uint8_t* arg0, uint32_t arg1) __asm__("_ZN7poke_3d5model10CharaModel14SetupRandomFucEPFjjE");
+extern "C" void Speculative_0040dd54(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x110) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004100F4
+extern "C" void Speculative_004100f4(uint8_t* arg0, uint32_t arg1) __asm__("_ZN7poke_3d5model12PokemonModel22SetEnabledAmbientColorEi");
+extern "C" void Speculative_004100f4(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x2cc) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0041178C
+extern "C" void Speculative_0041178c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN7poke_3d5model17CharaModelFactory15SetupRandomFuncEPFjjE");
+extern "C" void Speculative_0041178c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x18) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00417920
+extern "C" void Speculative_00417920(uint8_t* arg0, uint32_t arg1) __asm__("_ZN7poke_3d5model9BaseModel20SetAnimationPackListEPN4gfl29animation17AnimationPackListE");
+extern "C" void Speculative_00417920(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x24) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00464D8C
+extern "C" void Speculative_00464d8c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN9NetAppLib8P2PTrade21P2PTradeRequestClient27SetP2PTradeResponseListenerEPNS0_24P2PTradeResponseListenerE");
+extern "C" void Speculative_00464d8c(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x8) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0048DFD8
+extern "C" uint32_t Speculative_0048dfd8(uint8_t* arg0) __asm__("_ZNK3app4tool13CursorManager6GetPosEv");
+extern "C" uint32_t Speculative_0048dfd8(uint8_t* arg0) { return (uint32_t)*(uint8_t*)((uint32_t)arg0 + 0x14); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0048E180
+extern "C" uint32_t Speculative_0048e180(uint8_t* arg0) __asm__("_ZNK3app4tool14PokeIconToolEx14GetPicturePaneEv");
+extern "C" uint32_t Speculative_0048e180(uint8_t* arg0) { return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x34); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0048E718
+extern "C" uint32_t Speculative_0048e718(uint8_t* arg0) __asm__("_ZNK3app4tool8PaneList15GetUpdateResultEv");
+extern "C" uint32_t Speculative_0048e718(uint8_t* arg0) { return (uint32_t)*(uint8_t*)((uint32_t)arg0 + 0xc4); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00493B2C
+extern "C" uint32_t Speculative_00493b2c(uint8_t* arg0) __asm__("_ZNK3pml9PokeParty14GetMemberCountEv");
+extern "C" uint32_t Speculative_00493b2c(uint8_t* arg0) { return (uint32_t)*(uint8_t*)((uint32_t)arg0 + 0x18); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00493B9C
+extern "C" uint32_t Speculative_00493b9c(uint8_t* arg0) __asm__("_ZNK3pml9PokeParty15GetMarkingIndexEv");
+extern "C" uint32_t Speculative_00493b9c(uint8_t* arg0) { return (uint32_t)*(uint8_t*)((uint32_t)arg0 + 0x19); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00493FB8
+extern "C" uint32_t Speculative_00493fb8(uint8_t* arg0) __asm__("_ZNK4gfl215renderingengine10scenegraph8NodeName11GetNodeNameEv");
+extern "C" uint32_t Speculative_00493fb8(uint8_t* arg0) { return ((uint32_t)arg0 + 0x4); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004967CC
+extern "C" uint32_t Speculative_004967cc(uint8_t* arg0) __asm__("_ZNK4gfl215renderingengine8renderer4util22MakeReductionImagePath21GetDestinationTextureEv");
+extern "C" uint32_t Speculative_004967cc(uint8_t* arg0) { return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x138); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00499384
+extern "C" uint32_t Speculative_00499384(uint8_t* arg0) __asm__("_ZNK4gfl23lyt13LytMultiResID10GetMultiIDEv");
+extern "C" uint32_t Speculative_00499384(uint8_t* arg0) { return (uint32_t)*(uint16_t*)((uint32_t)arg0 + 0x2); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A2CC8
+extern "C" uint32_t Speculative_004a2cc8(uint8_t* arg0) __asm__("_ZNK6NetLib4Wifi17WifiConnectRunner23IsNeedDisconnectProcessEv");
+extern "C" uint32_t Speculative_004a2cc8(uint8_t* arg0) { return (int32_t)*(int8_t*)((uint32_t)arg0 + 0x13); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A2DA0
+extern "C" uint32_t Speculative_004a2da0(uint8_t* arg0) __asm__("_ZNK6NetLib8Delivery15DeliveryManager13IsInitializedEv");
+extern "C" uint32_t Speculative_004a2da0(uint8_t* arg0) { return (int32_t)*(int8_t*)((uint32_t)arg0 + 0x4); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A3100
+extern "C" uint32_t Speculative_004a3100(uint8_t* arg0) __asm__("_ZNK6System6Skybox6Skybox8IsEnableEv");
+extern "C" uint32_t Speculative_004a3100(uint8_t* arg0) { return (int32_t)*(int8_t*)((uint32_t)arg0 + 0x28); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A32D0
+extern "C" uint32_t Speculative_004a32d0(uint8_t* arg0) __asm__("_ZNK7GameSys8GameData12GetNowZoneIDEv");
+extern "C" uint32_t Speculative_004a32d0(uint8_t* arg0) { return (uint32_t)*(uint16_t*)((uint32_t)arg0 + 0x62); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A34B0
+extern "C" uint32_t Speculative_004a34b0(uint8_t* arg0) __asm__("_ZNK7gflnet23nex10NexManager22GetAuthenticationTokenEv");
+extern "C" uint32_t Speculative_004a34b0(uint8_t* arg0) { return ((uint32_t)arg0 + 0x28); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A3810
+extern "C" uint32_t Speculative_004a3810(uint8_t* arg0) __asm__("_ZNK7poke_3d5model10BaseCamera13GetFrameCountEv");
+extern "C" uint32_t Speculative_004a3810(uint8_t* arg0) { return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x30); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A3F14
+extern "C" float Speculative_004a3f14(uint8_t* arg0) __asm__("_ZNK7poke_3d5model10BaseCamera17GetAnimationFrameEv");
+extern "C" float Speculative_004a3f14(uint8_t* arg0) { return *(float*)((uint32_t)arg0 + 0x28); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A43C8
+extern "C" uint32_t Speculative_004a43c8(uint8_t* arg0) __asm__("_ZNK7poke_3d5model10CharaModel13GetMouthIndexEv");
+extern "C" uint32_t Speculative_004a43c8(uint8_t* arg0) { return (uint32_t)*(uint8_t*)((uint32_t)arg0 + 0xec); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AAA20
+extern "C" uint32_t Speculative_004aaa20(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData13GetUpdateDateEv");
+extern "C" uint32_t Speculative_004aaa20(uint8_t* arg0) { return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x1f8); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AAA28
+extern "C" uint32_t Speculative_004aaa28(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData14GetDressUpIconEv");
+extern "C" uint32_t Speculative_004aaa28(uint8_t* arg0) { return ((uint32_t)arg0 + 0x4c); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AAA38
+extern "C" uint32_t Speculative_004aaa38(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData15GetDressUpParamEv");
+extern "C" uint32_t Speculative_004aaa38(uint8_t* arg0) { return ((uint32_t)arg0 + 0x4c); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AACC0
+extern "C" uint32_t Speculative_004aacc0(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData19GetPacketAttractionEv");
+extern "C" uint32_t Speculative_004aacc0(uint8_t* arg0) { return ((uint32_t)arg0 + 0x208); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AADC8
+extern "C" uint32_t Speculative_004aadc8(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData20GetPacketTradeInviteEv");
+extern "C" uint32_t Speculative_004aadc8(uint8_t* arg0) { return ((uint32_t)arg0 + 0x208); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AAF00
+extern "C" uint32_t Speculative_004aaf00(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData21GetPacketTradeRecieveEv");
+extern "C" uint32_t Speculative_004aaf00(uint8_t* arg0) { return ((uint32_t)arg0 + 0x208); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AB42C
+extern "C" uint32_t Speculative_004ab42c(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData7GetNameEv");
+extern "C" uint32_t Speculative_004ab42c(uint8_t* arg0) { return ((uint32_t)arg0 + 0x10); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AB478
+extern "C" uint32_t Speculative_004ab478(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta28JoinFestaPersonalDataManager17GetInviteTicketIdEv");
+extern "C" uint32_t Speculative_004ab478(uint8_t* arg0) { return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x290); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002C9E48
+extern "C" uint32_t Speculative_002c9e48(uint8_t* arg0) __asm__("_ZN3App4Tool10MapManager19IsMapTextureReplaceEv");
+extern "C" uint32_t Speculative_002c9e48(uint8_t* arg0) { return (int32_t)*(int8_t*)(((uint32_t)arg0 + 0x100) + 0x30); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002F216C
+extern "C" uint32_t Speculative_002f216c(uint8_t* arg0) __asm__("_ZN3app4tool16CharaSimpleModel21GetCharaBattleCharaIdEj");
+extern "C" uint32_t Speculative_002f216c(uint8_t* arg0) { return ((uint32_t)arg0 != 0); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002FCDE8
+extern "C" uint32_t Speculative_002fcde8(uint8_t* arg0) __asm__("_ZN3app4tool27AppToolTrainerIconRendering16GetHeroTrainerIdEj");
+extern "C" uint32_t Speculative_002fcde8(uint8_t* arg0) { return ((uint32_t)arg0 != 0); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00310A58
+extern "C" uint32_t Speculative_00310a58(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3app4util7G2DUtil18SetMessageCallbackEPN5print11MsgCallbackE");
+extern "C" uint32_t Speculative_00310a58(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x34) + 0xe8) = arg1; return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x34); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00396EC0
+extern "C" uint32_t Speculative_00396ec0(uint8_t* arg0) __asm__("_ZN5Field7Encount11EncountWork16GetEncountEffectEv");
+extern "C" uint32_t Speculative_00396ec0(uint8_t* arg0) { return (((uint32_t)arg0 + 0x400) + 0x108); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0039A520
+extern "C" uint32_t Speculative_0039a520(uint8_t* arg0) __asm__("_ZN5Field9EventWork18GetMushiyokeItemNoEv");
+extern "C" uint32_t Speculative_0039a520(uint8_t* arg0) { return (uint32_t)*(uint16_t*)(((uint32_t)arg0 + 0x900) + 0xc6); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003D6ED8
+extern "C" uint32_t Speculative_003d6ed8(uint8_t* arg0) __asm__("_ZN6NetLib3P2P20P2pConnectionManager26IsMatchmakingCreateSuccessEv");
+extern "C" uint32_t Speculative_003d6ed8(uint8_t* arg0) { return (int32_t)*(int8_t*)(((uint32_t)arg0 + 0x100) + 0x8c); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00417504
+extern "C" uint32_t Speculative_00417504(uint8_t* arg0) __asm__("_ZN7poke_3d5model9BaseModel14GetWorldMatrixEv");
+extern "C" uint32_t Speculative_00417504(uint8_t* arg0) { return ((uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x4) + 0x48); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004178CC
+extern "C" uint32_t Speculative_004178cc(uint8_t* arg0, uint32_t arg1) __asm__("_ZN7poke_3d5model9BaseModel19SetInterestPositionEPKN4gfl24math7Vector3E");
+extern "C" uint32_t Speculative_004178cc(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)*(uint32_t*)((uint32_t)arg0 + 0xcc) + 0x10) = arg1; return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0xcc); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0041B744
+extern "C" uint32_t Speculative_0041b744(uint8_t* arg0, uint32_t arg1, uint32_t arg2) __asm__("_ZN7poke_3d8renderer21OutLinePostRenderPath17SetEdgeMapTextureEjPKN4gfl23gfx7TextureE");
+extern "C" uint32_t Speculative_0041b744(uint8_t* arg0, uint32_t arg1, uint32_t arg2) { *(uint32_t*)(((uint32_t)arg0 + (arg1 << 2)) + 0x4) = arg2; return ((uint32_t)arg0 + (arg1 << 2)); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00434D78
+extern "C" uint32_t Speculative_00434d78(uint8_t* arg0) __asm__("_ZN8PokeTool9PokeModel18GetAnimationIsLoopEv");
+extern "C" uint32_t Speculative_00434d78(uint8_t* arg0) { return (int32_t)*(int8_t*)(((uint32_t)arg0 + 0x1200) + 0xb5); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x0043E8B8
+extern "C" uint32_t Speculative_0043e8b8(uint8_t* arg0) __asm__("_ZN8Savedata17JoinFestaDataSave18GetLastP2pPersonalEv");
+extern "C" uint32_t Speculative_0043e8b8(uint8_t* arg0) { return (((uint32_t)arg0 + 0x2c00) + 0x288); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00443E90
+extern "C" uint32_t Speculative_00443e90(uint8_t* arg0) __asm__("_ZN8Savedata8PlayTime12PushSaveTimeEv");
+extern "C" uint32_t Speculative_00443e90(uint8_t* arg0) { *(uint32_t*)((uint32_t)arg0 + 0xc) = (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x8); return (uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x8); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00443E9C
+extern "C" uint32_t Speculative_00443e9c(uint8_t* arg0) __asm__("_ZN8Savedata8PlayTime13GetSaveMinuteEv");
+extern "C" uint32_t Speculative_00443e9c(uint8_t* arg0) { return ((uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x8) >> 26); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00445474
+extern "C" uint32_t Speculative_00445474(uint8_t* arg0, uint32_t arg1) __asm__("_ZN8Savedata9FieldMenu15GetRideShortcutENS0_9RideKeyIDE");
+extern "C" uint32_t Speculative_00445474(uint8_t* arg0, uint32_t arg1) { return (uint32_t)*(uint8_t*)(((uint32_t)arg0 + arg1) + 0x16); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00445480
+extern "C" uint32_t Speculative_00445480(uint8_t* arg0, uint32_t arg1, uint32_t arg2) __asm__("_ZN8Savedata9FieldMenu15SetRideShortcutENS0_9RideKeyIDENS0_6RideIDE");
+extern "C" uint32_t Speculative_00445480(uint8_t* arg0, uint32_t arg1, uint32_t arg2) { *(uint8_t*)(((uint32_t)arg0 + arg1) + 0x16) = arg2; return ((uint32_t)arg0 + arg1); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00464D94
+extern "C" uint32_t Speculative_00464d94(uint8_t* arg0) __asm__("_ZN9NetAppLib8P2PTrade21P2PTradeRequestClient29GetLastRecvPokemonParamBufferEv");
+extern "C" uint32_t Speculative_00464d94(uint8_t* arg0) { return (((uint32_t)arg0 + 0x2000) + 0x7c); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x00473120
+extern "C" uint32_t Speculative_00473120(uint8_t* arg0) __asm__("_ZN9NetAppLib9JoinFesta28JoinFestaPersonalDataManager20GetRecruiterPersonalEv");
+extern "C" uint32_t Speculative_00473120(uint8_t* arg0) { return (((uint32_t)arg0 + 0x400) + 0xf8); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A54B4
+extern "C" uint32_t Speculative_004a54b4(uint8_t* arg0) __asm__("_ZNK7poke_3d5model9BaseModel11GetPositionEv");
+extern "C" uint32_t Speculative_004a54b4(uint8_t* arg0) { return ((uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x4) + 0x20); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A6614
+extern "C" uint32_t Speculative_004a6614(uint8_t* arg0) __asm__("_ZNK7trainer15TrainerTypeData6GetSexEv");
+extern "C" uint32_t Speculative_004a6614(uint8_t* arg0) { return ((uint32_t)*(uint8_t*)((uint32_t)arg0 + 0x4) & 0x3); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A6B50
+extern "C" uint32_t Speculative_004a6b50(uint8_t* arg0) __asm__("_ZNK8PokeTool15PokeModelSystem20GetPokeShaderPathNumEv");
+extern "C" uint32_t Speculative_004a6b50(uint8_t* arg0) { return ((uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x3c) + 0x1); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A8350
+extern "C" uint32_t Speculative_004a8350(uint8_t* arg0) __asm__("_ZNK8Savedata8MyStatus10GetCountryEv");
+extern "C" uint32_t Speculative_004a8350(uint8_t* arg0) { return ((uint32_t)*(uint32_t*)((uint32_t)arg0 + 0x34) >> 24); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AA5A8
+extern "C" uint32_t Speculative_004aa5a8(uint8_t* arg0, uint32_t arg1) __asm__("_ZNK9NetAppLib4Util30NetAppPokemonValidationUtility15GetVerifyResultEj");
+extern "C" uint32_t Speculative_004aa5a8(uint8_t* arg0, uint32_t arg1) { return (uint32_t)*(uint8_t*)(((uint32_t)arg0 + arg1) + 0xc); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AACB4
+extern "C" uint32_t Speculative_004aacb4(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData19GetAttractionMonsNoEv");
+extern "C" uint32_t Speculative_004aacb4(uint8_t* arg0) { return (uint32_t)*(uint16_t*)(((uint32_t)arg0 + 0x200) + 0x42); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AB1D8
+extern "C" uint32_t Speculative_004ab1d8(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData24GetRecommendFacilitiesIdEv");
+extern "C" uint32_t Speculative_004ab1d8(uint8_t* arg0) { return ((uint32_t)*(uint16_t*)((uint32_t)arg0 + 0x76) & 0xff); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AB3FC
+extern "C" uint32_t Speculative_004ab3fc(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta21JoinFestaPersonalData6GetSexEv");
+extern "C" uint32_t Speculative_004ab3fc(uint8_t* arg0) { return ((uint32_t)*(uint16_t*)((uint32_t)arg0 + 0x2a) & 0x7); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004AB490
+extern "C" uint32_t Speculative_004ab490(uint8_t* arg0) __asm__("_ZNK9NetAppLib9JoinFesta28JoinFestaPersonalDataManager18IsRecruiterVisibleEv");
+extern "C" uint32_t Speculative_004ab490(uint8_t* arg0) { return (int32_t)*(int8_t*)(((uint32_t)arg0 + 0x900) + 0x88); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002CC1BC
+extern "C" void Speculative_002cc1bc(uint8_t* arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3) __asm__("_ZN3App4Tool11NewPaneList14SetupInputModeEbbb");
+extern "C" void Speculative_002cc1bc(uint8_t* arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3) { *(uint8_t*)((uint32_t)arg0 + 0xd9) = arg1; *(uint8_t*)((uint32_t)arg0 + 0xda) = arg2; *(uint8_t*)((uint32_t)arg0 + 0xdb) = arg3; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x002E664C
+extern "C" uint32_t Speculative_002e664c(uint8_t* arg0, uint32_t arg1) __asm__("_ZN3App9FieldMenu8PlayData19GetRotomMessageTextEj");
+extern "C" uint32_t Speculative_002e664c(uint8_t* arg0, uint32_t arg1) { return ((uint32_t)*(uint32_t*)(((uint32_t)arg0 + (arg1 << 3)) + 0x8) & 0x7fffffff); }
+#endif
+
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x003BFB94
+extern "C" void Speculative_003bfb94(uint8_t* arg0, uint32_t arg1) __asm__("_ZN5print14HangulComposerC1EPKN2nw4font4FontE");
+extern "C" void Speculative_003bfb94(uint8_t* arg0, uint32_t arg1) { *(uint32_t*)((uint32_t)arg0 + 0x0) = arg1; }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A3520
+extern "C" uint32_t Speculative_004a3520(uint8_t* arg0) __asm__("_ZNK7gflnet23nex16NexRankingClient12IsConnectingEv");
+extern "C" uint32_t Speculative_004a3520(uint8_t* arg0) { return (int32_t)*(int8_t*)((uint32_t)arg0 + 0x5); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A3528
+extern "C" uint32_t Speculative_004a3528(uint8_t* arg0) __asm__("_ZNK7gflnet23nex18NexDataStoreClient12IsConnectingEv");
+extern "C" uint32_t Speculative_004a3528(uint8_t* arg0) { return (int32_t)*(int8_t*)((uint32_t)arg0 + 0x5); }
+#endif
+
+#if !defined(POKEMOON_SPLIT_FUNCTION) || POKEMOON_SPLIT_FUNCTION == 0x004A3550
+extern "C" uint32_t Speculative_004a3550(uint8_t* arg0) __asm__("_ZNK7gflnet23nex20NexMatchMakingClient12IsConnectingEv");
+extern "C" uint32_t Speculative_004a3550(uint8_t* arg0) { return (int32_t)*(int8_t*)((uint32_t)arg0 + 0x5); }
+#endif
+
