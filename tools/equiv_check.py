@@ -41,7 +41,12 @@ def run(code, entry_off, args, seed, wide=False, fret=False, stubs=()):
             name = stubs[(addr - STUBBASE) // 8]
             norm = lambda v: 'SP' if STACK <= v < STACK + 0x10000 else v  # stack addresses differ between builds
             k, isfloat = ARITY.get(name, (4, True))  # compare only the registers the callee actually takes
-            a = tuple(norm(uc.reg_read(r)) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)[:k]) + ((uc.reg_read(UC_ARM_REG_S0),) if isfloat else ())
+            a = tuple(norm(uc.reg_read(r)) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)[:min(k, 4)]) + ((uc.reg_read(UC_ARM_REG_S0),) if isfloat else ())
+            if k > 4:  # outgoing stack arguments live at [sp] at the call
+                sp = uc.reg_read(UC_ARM_REG_SP)
+                a += tuple(int.from_bytes(uc.mem_read(sp + 4 * i, 4), 'little') for i in range(k - 4))
+            a += tuple(bytes(uc.mem_read(uc.reg_read(r), 12)) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)[:min(k, 4)]
+                       if STACK <= uc.reg_read(r) < STACK + 0x10000 - 16)  # contents of by-pointer stack temporaries
             events.append((name, a))
             h = (hash_name(name) + len(events) * 0x9E3779B1) & 0xFFFFFFFF
             if seed % 2: h = BUF + (h & 0x3FFFC)  # odd trials: callees return valid pointers so deref chains stay live
@@ -55,6 +60,7 @@ def run(code, entry_off, args, seed, wide=False, fret=False, stubs=()):
     mu.reg_write(UC_ARM_REG_R0, BUF + 0x1000)
     for r, v in zip((UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3), args): mu.reg_write(r, v)
     mu.reg_write(UC_ARM_REG_SP, STACK + 0x8000); mu.reg_write(UC_ARM_REG_LR, RET)
+    srng = random.Random(seed * 13 + 5); mu.mem_write(STACK + 0x8000, b''.join((srng.choice([0, 1, 2, 3, 7, 60, 255]) if srng.random() < .6 else BUF + 4 * srng.randrange(1000)).to_bytes(4, 'little') for _ in range(8)))
     try:
         mu.emu_start(CODEBASE + entry_off, RET, count=20000)
         if mu.reg_read(UC_ARM_REG_PC) != RET: return 'fault'  # did not return: treat as fault, never as a pass
@@ -73,7 +79,7 @@ fails = 0
 ARITY = {}
 for decl in re.finditer(r'^\s*[\w\*\s]+?\s\**\w+\(([^)]*)\)\s*__asm__\("([^"]+)"\);', text, re.M):
     params = [x.strip() for x in decl.group(1).split(',') if x.strip() and x.strip() != 'void']
-    ARITY[decl.group(2)] = (min(4, len(params)), any('float' in x for x in params))
+    ARITY[decl.group(2)] = (min(8, len(params)), any(x.split()[-1] == 'float' or x == 'float' for x in params if '*' not in x))
 syms = {r['target_address'].lower(): r['mangled_name'] for r in csv.DictReader(open(f'{ROOT}/symbols/master_symbols.csv')) if r['target_address']}
 for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
     ad = int(ad_s, 16); q = queue[ad_s.lower()]; n = int(q['size'])

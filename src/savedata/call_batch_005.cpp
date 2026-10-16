@@ -40,7 +40,7 @@ void OperatorDelete(void*) __asm__("_ZdlPv");
 void MessageWindow_SetMessageSpeed(Obj*, uint32_t, bool) __asm__("_ZN5print13MessageWindow15SetMessageSpeedEN8Savedata10ConfigSave9MSG_SPEEDEb");
 void G2DUtil_SetMessageFinishMode(Obj*, uint32_t, uint8_t) __asm__("_ZN3app4util7G2DUtil20SetMessageFinishModeEN4gfl23str6StrWin10FinishTypeEh");
 void BaseModel_SetRotationVec(Obj*, const float*, uint32_t) __asm__("_ZN7poke_3d5model9BaseModel11SetRotationERKN4gfl24math7Vector3ENS3_13EulerRotation13RotationOrderE");
-void G2DUtil_SetPanePos(Obj*, uint32_t, uint32_t, const float*) __asm__("_ZN3app4util12G2DUtil10SetPanePosEjjPKN4gfl24math22ExtendedVectorTemplateINS3_33SpecializedExtendedVectorTemplateIN2nn4math4VEC3EEEEE");
+void G2DUtil_SetPanePos(Obj*, uint32_t, uint32_t, const float*) __asm__("_ZN3app4util7G2DUtil10SetPanePosEjjPKN4gfl24math22ExtendedVectorTemplateINS3_33SpecializedExtendedVectorTemplateIN2nn4math4VEC3EEEEE");
 VFP void PokeModel_SetMegaGangarEffectState(Obj*, float) __asm__("_ZN8PokeTool9PokeModel24SetMegaGangarEffectStateEf");
 }
 
