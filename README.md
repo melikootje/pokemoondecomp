@@ -20,14 +20,14 @@ layout record.
 
 ## Current state
 
-The canonical manifest currently records 3,133 source-backed functions out of
-18,945 inventoried internal functions (16.54%):
+The canonical manifest currently records 3,172 source-backed functions out of
+18,945 inventoried internal functions (16.74%):
 
 | Status | Count |
 |---|---:|
 | Exact ARM match | 318 |
 | Near match | 1 |
-| Semantic verified, nonmatching | 2,811 |
+| Semantic verified, nonmatching | 2,850 |
 | Semantic unverified | 3 |
 | Runtime-ready | 53 |
 
