@@ -34,7 +34,8 @@ def run(code, entry_off, args, seed, wide=False):
     for r, v in zip((UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3), args): mu.reg_write(r, v)
     mu.reg_write(UC_ARM_REG_SP, STACK + 0x8000); mu.reg_write(UC_ARM_REG_LR, RET)
     try:
-        mu.emu_start(CODEBASE + entry_off, RET, count=500)
+        mu.emu_start(CODEBASE + entry_off, RET, count=20000)
+        if mu.reg_read(UC_ARM_REG_PC) != RET: return 'fault'  # did not return: treat as fault, never as a pass
     except UcError:
         return 'fault'
     return mu.reg_read(UC_ARM_REG_R0) | (mu.reg_read(UC_ARM_REG_R1) << 32 if wide else 0), bytes(mu.mem_read(BUF, BUFSZ))
@@ -43,7 +44,7 @@ def argset(rng):
     pick = lambda: rng.choice([0, 1, 2, 3, 4, 5, 59, 60, 61, 99, 100, 101, 254, 255, 256, 0x7fffffff, 0x80000000, 0xffffffff,
                                rng.randrange(0, 64), rng.randrange(0, 1 << 32), rng.randrange(0, 300)])
     ptr = lambda: BUF + 0x2000 + 4 * rng.randrange(64)
-    return [pick(), rng.choice([pick(), ptr(), 0]), rng.choice([pick(), ptr()])]
+    return [rng.choice([pick(), pick(), ptr()]), rng.choice([pick(), ptr(), 0]), rng.choice([pick(), ptr()])]
 
 fails = 0
 for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
