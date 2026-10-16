@@ -16,7 +16,7 @@ Updated: 2026-09-05
 |---|---:|
 | Source-backed | 1,000 |
 | Compiling | 1,000 |
-| `ASM_MATCH` | 298 |
+| `ASM_MATCH` | 318 |
 | `ASM_NEAR_MATCH` | 1 |
 | Semantic verified/nonmatching | 698 |
 | Semantic unverified | 3 |
