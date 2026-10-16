@@ -58,12 +58,12 @@ def run(code, entry_off, args, seed, wide=False, fret=False, stubs=(), r0=None):
         def on_stub(uc, addr, size, ud):
             name = stubs[(addr - STUBBASE) // 8]
             norm = lambda v: 'SP' if STACK <= v < STACK + 0x10000 else v  # stack addresses differ between builds
-            k, isfloat = ARITY.get(name, (4, True))  # compare only the registers the callee actually takes
+            k, isfloat, widths = ARITY.get(name, (4, True, [4] * 8))  # compare only the registers the callee actually takes
             a = tuple(norm(uc.reg_read(r)) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)[:min(k, 4)]) + ((uc.reg_read(UC_ARM_REG_S0),) if isfloat else ())
             if k > 4:  # outgoing stack arguments live at [sp] at the call
                 sp = uc.reg_read(UC_ARM_REG_SP)
                 a += tuple(int.from_bytes(uc.mem_read(sp + 4 * i, 4), 'little') for i in range(k - 4))
-            a += tuple(bytes(uc.mem_read(uc.reg_read(r), 12)) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)[:min(k, 4)]
+            a += tuple(bytes(uc.mem_read(uc.reg_read(r), widths[j])) for j, r in enumerate((UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)[:min(k, 4)])
                        if STACK <= uc.reg_read(r) < STACK + 0x10000 - 16)  # contents of by-pointer stack temporaries
             events.append((name, a))
             h = (hash_name(name) + len(events) * 0x9E3779B1) & 0xFFFFFFFF
@@ -100,7 +100,8 @@ fails = 0
 ARITY = {}
 for decl in re.finditer(r'^\s*[\w\*\s]+?\s\**\w+\(([^)]*)\)\s*__asm__\("([^"]+)"\);', text, re.M):
     params = [x.strip() for x in decl.group(1).split(',') if x.strip() and x.strip() != 'void']
-    ARITY[decl.group(2)] = (min(8, len(params)), any(x.split()[-1] == 'float' or x == 'float' for x in params if '*' not in x))
+    ARITY[decl.group(2)] = (min(8, len(params)), any(x.split()[-1] == 'float' or x == 'float' for x in params if '*' not in x),
+                            [12 if ('float' in x and '*' in x) else 4 for x in params])  # bytes to compare behind stack pointers
 syms = {r['target_address'].lower(): r['mangled_name'] for r in csv.DictReader(open(f'{ROOT}/symbols/master_symbols.csv')) if r['target_address']}
 REV = {v: int(k, 16) for k, v in syms.items()}
 for ad_s in re.findall(r'POKEMOON_SPLIT_FUNCTION == (0x[0-9A-Fa-f]+)', text):
